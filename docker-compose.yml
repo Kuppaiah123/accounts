@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+
+  accounts:
+    image: kuppaiah/accounts:latest
+    mem_limit: 700m
+    ports:
+      - "8080:8080"
+    networks:
+      - banks-network
+
+
+  loans:
+    image: kuppaiah/loans:latest
+    mem_limit: 700m
+    ports:
+      - "8090:8090"
+    networks:
+      - banks-network
+
+  cards:
+    image: kuppaiah/cards:latest
+    mem_limit: 700m
+    ports:
+      - "9000:9000"
+    networks:
+      - banks-network
+
+networks:
+  banks-network:
