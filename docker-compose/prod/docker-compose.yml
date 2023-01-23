@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+
+  configserver:
+    image: kuppaiah/springconfig:latest
+    mem_limit: 700m
+    ports:
+      - "8071:8071"
+    networks:
+      - bank
+
+  accounts:
+    image: kuppaiah/accounts
+    mem_limit: 700m
+    ports:
+      - "8080:8080"
+    networks:
+      - bank
+    depends_on:
+      - configserver
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+  loans:
+    image: kuppaiah/loans
+    mem_limit: 700m
+    ports:
+      - "8090:8090"
+    networks:
+      - bank
+    depends_on:
+      - configserver
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILE_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071
+
+  cards:
+    image: kuppaiah/cards
+    mem_limit: 700m
+    ports:
+      - "9000:9000"
+    networks:
+      - bank
+    depends_on:
+      - configserver
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3s
+        window: 120s
+    environment:
+      SPRING_PROFILE_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+networks:
+  bank:
+
+
